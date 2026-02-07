@@ -847,14 +847,19 @@
             pekerjaan: document.getElementById('pekerjaan').value
         };
 
-        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+        // Gunakan fetch dengan mode 'no-cors' jika di hosting publik seperti GitHub
+        fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: JSON.stringify(payload),
+            mode: 'no-cors', // Menghindari error CORS di browser
+            headers: { 'Content-Type': 'application/json' }
+        })
         .then(() => { 
-            alert("Data Berhasil Tersimpan di Cloud!"); 
+            alert("Data Terkirim ke Sistem!"); 
             document.getElementById('bimbinganForm').reset();
-            document.getElementById('tanggal').valueAsDate = new Date();
             showPage('page-menu');
         })
-        .catch(err => alert("Gagal menyimpan: " + err))
+        .catch(err => alert("Terjadi gangguan koneksi, cek Sheets Bapak."))
         .finally(() => toggleLoading(false));
     };
 
@@ -881,3 +886,4 @@
 </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c9f768de492fd91',t:'MTc3MDQzMTQwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
