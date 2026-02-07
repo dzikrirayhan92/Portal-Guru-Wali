@@ -3,70 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guru Wali Gesit Online - Jatie Hartono</title>
+    <title>Guru Wali Gesit - Jatie Hartono</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --danger: #e74c3c; --light: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); margin: 0; padding: 10px; }
-        .container { max-width: 500px; margin: 20px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .hidden { display: none !important; }
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        :root { 
+            --primary: #4f46e5; 
+            --primary-hover: #4338ca;
+            --success: #10b981; 
+            --danger: #ef4444; 
+            --bg: #f3f4f6; 
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 0; 
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.8); 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 9999; backdrop-filter: blur(8px);
+        }
+        .spinner { 
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); 
+            border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn { padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 5px 0; color: white; transition: 0.3s; width: 100%; display: block; text-align: center; text-decoration: none; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.85rem; }
-        th { background: var(--primary); color: white; }
+
+        .container { 
+            max-width: 550px; margin: 40px auto; background: white; 
+            padding: 35px; border-radius: 24px; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h2 { font-weight: 700; color: var(--text-dark); margin-bottom: 5px; }
+        .header p { color: var(--text-light); font-size: 0.9rem; margin-top: 0; }
+
+        /* Keterangan Form Section */
+        .section-info {
+            background: #eef2ff;
+            padding: 12px 15px;
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: #3730a3;
+            font-weight: 600;
+        }
+
+        .hidden { display: none !important; }
+
+        label { display: block; margin-top: 15px; margin-bottom: 6px; font-weight: 700; font-size: 0.85rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+        input, textarea { 
+            width: 100%; padding: 14px; border: 1.5px solid #e5e7eb; border-radius: 12px; 
+            box-sizing: border-box; font-size: 0.95rem; transition: all 0.2s; background: #f9fafb;
+        }
+        input:focus, textarea:focus { 
+            outline: none; border-color: var(--primary); background: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); 
+        }
+
+        .btn { 
+            padding: 14px; border: none; border-radius: 14px; cursor: pointer; 
+            font-weight: 700; margin-top: 10px; transition: all 0.2s; 
+            width: 100%; font-size: 1rem;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-back { background: transparent; color: var(--text-light); border: 1.5px solid #e5e7eb; width: auto; padding: 8px 20px; margin-bottom: 20px; }
+
+        .data-card { max-width: 850px !important; }
+        .table-wrapper { overflow-x: auto; border-radius: 16px; border: 1px solid #e5e7eb; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f9fafb; padding: 15px; text-align: left; font-size: 0.75rem; color: var(--text-light); border-bottom: 1.5px solid #e5e7eb; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div id="loading" class="hidden loading-overlay">
     <div class="spinner"></div>
-    <h3>Memproses...</h3>
+    <p style="font-weight: 600; margin-top: 15px; color: var(--primary)">Sedang memproses...</p>
 </div>
 
 <div id="page-login" class="container">
-    <h2 style="text-align:center">🔐 Login Guru Gesit</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Sandi">
-    <button class="btn" style="background: var(--secondary);" onclick="handleLogin()">Masuk</button>
+    <div class="header">
+        <h2 style="font-size: 1.8rem;">🔐 Login Akses</h2>
+        <p>Gunakan akun Guru Wali untuk melanjutkan</p>
+    </div>
+    <label>Nama Pengguna</label>
+    <input type="text" id="username" placeholder="Masukkan Username">
+    <label>Kata Sandi</label>
+    <input type="password" id="password" placeholder="Masukkan Sandi">
+    <button class="btn btn-primary" onclick="handleLogin()">Masuk ke Aplikasi</button>
 </div>
 
 <div id="main-content" class="hidden">
     <div id="page-menu" class="container">
-        <h2>Menu Utama</h2>
-        <button class="btn" style="background: var(--success);" onclick="showPage('page-form')">📝 Input Bimbingan</button>
-        <button class="btn" style="background: var(--primary);" onclick="fetchData()">📊 Lihat Data Online</button>
-        <button class="btn" style="background: #95a5a6; margin-top:10px;" onclick="location.reload()">Logout</button>
+        <div class="header">
+            <h2>Pusat Kendali</h2>
+            <p>Aplikasi Monitoring Bimbingan Siswa</p>
+        </div>
+        <button class="btn btn-success" onclick="showPage('page-form')">📝 Tambah Data Baru</button>
+        <button class="btn btn-primary" onclick="fetchData()">📊 Rekap Data Online</button>
+        <button class="btn btn-back" style="width: 100%; margin-top: 20px;" onclick="location.reload()">Keluar Sesi</button>
     </div>
 
     <div id="page-form" class="hidden container">
-        <button onclick="showPage('page-menu')" style="cursor:pointer">← Kembali</button>
-        <h2>Form Bimbingan</h2>
+        <button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
+        <div class="header">
+            <h2>Input Laporan</h2>
+            <p>Silakan isi detail bimbingan di bawah ini</p>
+        </div>
+
+        <div class="section-info">📌 INFORMASI KEJADIAN & SISWA</div>
+        
         <form id="bimbinganForm">
-            <label>Tanggal</label>
-            <input type="date" id="tanggal" required>
-            <input type="text" id="nis" placeholder="NIS" required>
-            <input type="text" id="nama" placeholder="Nama Siswa" required>
-            <textarea id="catatan" placeholder="Catatan Masalah"></textarea>
-            <textarea id="tindakLanjut" placeholder="Tindak Lanjut"></textarea>
-            <input type="text" id="alamat" placeholder="Alamat">
-            <input type="text" id="namaOrtu" placeholder="Nama Orang Tua">
-            <input type="text" id="telp" placeholder="Telepon (WA)">
-            <input type="text" id="pekerjaan" placeholder="Pekerjaan Orang Tua">
-            <button type="submit" class="btn" style="background: var(--success);">Simpan Data</button>
+            <label>📅 Tanggal</label>
+            <input type="date" id="tanggal" required title="Pilih tanggal kejadian">
+            
+            <label>🆔 Nomor Induk Siswa (NIS)</label>
+            <input type="text" id="nis" placeholder="Contoh: 202301" required>
+            
+            <label>👤 Nama Lengkap Siswa</label>
+            <input type="text" id="nama" placeholder="Masukkan Nama Siswa" required>
+            
+            <label>📝 Catatan Masalah</label>
+            <textarea id="catatan" rows="3" placeholder="Uraikan masalah atau kasus siswa..."></textarea>
+            
+            <label>💡 Tindak Lanjut</label>
+            <textarea id="tindakLanjut" rows="3" placeholder="Solusi atau tindakan yang telah diberikan..."></textarea>
+
+            <div class="section-info" style="margin-top:25px;">🏠 INFORMASI ORANG TUA / WALI</div>
+            
+            <label>📍 Alamat Rumah</label>
+            <input type="text" id="alamat" placeholder="Alamat lengkap">
+            
+            <label>👨‍👩‍👦 Nama Orang Tua</label>
+            <input type="text" id="namaOrtu" placeholder="Ayah / Ibu">
+            
+            <label>📞 No. Telepon / WhatsApp</label>
+            <input type="text" id="telp" placeholder="Contoh: 08123456789">
+            
+            <label>💼 Pekerjaan Orang Tua</label>
+            <input type="text" id="pekerjaan" placeholder="Contoh: Pegawai Swasta">
+            
+            <button type="submit" class="btn btn-success" style="margin-top: 25px;">Simpan Laporan Sekarang</button>
         </form>
     </div>
 
-    <div id="page-data" class="hidden container" style="max-width: 850px;">
-        <button onclick="showPage('page-menu')" style="cursor:pointer">← Kembali</button>
-        <h2>Database Online</h2>
-        <button class="btn" style="background: var(--primary);" onclick="downloadExcel()">📥 Download Excel</button>
-        <div style="overflow-x:auto">
+    <div id="page-data" class="hidden container data-card">
+        <button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
+        <div class="header">
+            <h2>Data Tersimpan</h2>
+            <p>Daftar seluruh bimbingan yang telah masuk</p>
+        </div>
+        <button class="btn btn-primary" style="margin-bottom: 20px; width: auto;" onclick="downloadExcel()">📥 Export ke Excel</button>
+        <div class="table-wrapper">
             <table>
-                <thead><tr><th>Tanggal</th><th>Nama</th><th>Aksi</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>TANGGAL</th>
+                        <th>NAMA LENGKAP</th>
+                        <th style="text-align:center">KENDALI</th>
+                    </tr>
+                </thead>
                 <tbody id="data-body"></tbody>
             </table>
         </div>
@@ -74,14 +184,13 @@
 </div>
 
 <script>
+    // URL Web App Google Script Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPZDdVJiQAPCgd-DlnFpnuKgDy33A5FPKy3NJInCbTYhcB2juG1FRPUvSMBUeGzfHshw/exec";
     
     let bimbinganData = [];
 
-    // Fungsi pembantu untuk membersihkan jam dari string tanggal (ISO atau Date string)
     function formatDateOnly(dateStr) {
         if (!dateStr) return '';
-        // Jika formatnya ISO (2023-10-25T14:30:00) atau string dengan spasi
         return dateStr.split('T')[0].split(' ')[0];
     }
 
@@ -90,12 +199,13 @@
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
             showPage('page-menu');
-        } else { alert("Login Gagal!"); }
+        } else { alert("Maaf, Username atau Sandi salah!"); }
     }
 
     function showPage(id) {
         ['page-menu', 'page-form', 'page-data'].forEach(p => document.getElementById(p).classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
+        window.scrollTo(0, 0);
     }
 
     function toggleLoading(show) {
@@ -111,7 +221,7 @@
             renderTable();
             showPage('page-data');
         })
-        .catch(err => alert("Gagal mengambil data: " + err))
+        .catch(err => alert("Koneksi terputus: " + err))
         .finally(() => toggleLoading(false));
     }
 
@@ -120,11 +230,11 @@
         tbody.innerHTML = '';
         bimbinganData.forEach(item => {
             tbody.innerHTML += `<tr>
-                <td>${formatDateOnly(item.Tanggal)}</td>
-                <td><b>${item.Nama || ''}</b></td>
-                <td>
+                <td style="color:#6b7280">${formatDateOnly(item.Tanggal)}</td>
+                <td style="font-weight:600">${item.Nama || ''}</td>
+                <td style="text-align:center">
                     <button onclick="deleteData('${item.NIS}')" 
-                    style="background:var(--danger); color:white; border:none; padding:8px; border-radius:4px; cursor:pointer">
+                    style="background:#fee2e2; color:#b91c1c; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:700;">
                     Hapus</button>
                 </td>
             </tr>`;
@@ -132,17 +242,17 @@
     }
 
     function deleteData(nis) {
-        if(confirm("Hapus data NIS " + nis + "?")) {
+        if(confirm("Hapus data siswa dengan NIS: " + nis + "?")) {
             toggleLoading(true);
             fetch(SCRIPT_URL, { 
                 method: 'POST', 
                 body: JSON.stringify({ action: "delete", nis: String(nis) }) 
             })
             .then(() => {
-                alert("Berhasil dihapus!");
+                alert("Data berhasil dihapus dari cloud.");
                 fetchData();
             })
-            .catch(err => alert("Error: " + err))
+            .catch(err => alert("Gagal menghapus: " + err))
             .finally(() => toggleLoading(false));
         }
     }
@@ -166,7 +276,7 @@
 
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
         .then(() => { 
-            alert("Data Berhasil Tersimpan!"); 
+            alert("✅ Berhasil menyimpan data bimbingan!"); 
             document.getElementById('bimbinganForm').reset();
             showPage('page-menu');
         })
@@ -175,16 +285,14 @@
     };
 
     function downloadExcel() {
-        // Membersihkan data jam dari kolom Tanggal sebelum di-export
         const cleanedData = bimbinganData.map(item => ({
             ...item,
             Tanggal: formatDateOnly(item.Tanggal)
         }));
-
         const ws = XLSX.utils.json_to_sheet(cleanedData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Database_Gesit");
-        XLSX.writeFile(wb, "Data_Bimbingan_Lengkap.xlsx");
+        XLSX.writeFile(wb, "Rekap_Bimbingan_Konseling.xlsx");
     }
 </script>
 </body>
