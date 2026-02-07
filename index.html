@@ -741,112 +741,143 @@
    </div>
   </div>
   <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjTHx0i5Ae1cqnv5JE9U4D9Hnu-SS1p3gTXljy0vkgsUeYMufsLfvfGJb6elDJYClQxQ/exec";
-let bimbinganData = [];
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyd9sBrLYeMG5Cy8bYS-DaaQqVtLNYWojYBEOTxRe0_0Zktp7nveT2ApLuC-3EzhgKzww/exec"
+    let bimbinganData = [];
 
-function toggleLoading(show) {
-  document.getElementById('loading').classList[show ? 'remove' : 'add']('hidden');
-}
+    function formatDateOnly(dateStr) {
+        if (!dateStr) return '';
+        return dateStr.split('T')[0].split(' ')[0];
+    }
 
-function showPage(id) {
-  ['page-welcome','page-menu','page-form','page-data']
-    .forEach(p => document.getElementById(p).classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
+    function handleLogin() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorAlert = document.getElementById('error-alert');
+        
+        if(username === "gesit" && password === "admin123") {
+            errorAlert.classList.add('hidden');
+            document.getElementById('page-login').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            showPage('page-welcome');
+        } else { 
+            errorAlert.classList.remove('hidden');
+            document.getElementById('password').value = '';
+            document.getElementById('password').focus();
+        }
+    }
 
-function fetchData() {
-  toggleLoading(true);
+    function showPage(id) {
+        ['page-welcome', 'page-menu', 'page-form', 'page-data'].forEach(p => document.getElementById(p).classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+    }
 
-  fetch(SCRIPT_URL + "?action=read")
-    .then(res => res.json())
-    .then(data => {
-      bimbinganData = data;
-      renderTable();
-      showPage('page-data');
-    })
-    .catch(err => {
-      alert("Gagal mengambil data");
-      console.error(err);
-    })
-    .finally(() => toggleLoading(false));
-}
+    function toggleLoading(show) {
+        document.getElementById('loading').classList[show ? 'remove' : 'add']('hidden');
+    }
 
-function renderTable() {
-  const tbody = document.getElementById('data-body');
-  tbody.innerHTML = "";
+    function fetchData() {
+        toggleLoading(true);
+        fetch(SCRIPT_URL + "?action=read")
+        .then(res => res.json())
+        .then(data => {
+            bimbinganData = data;
+            renderTable();
+            showPage('page-data');
+        })
+        .catch(err => alert("Gagal mengambil data: " + err))
+        .finally(() => toggleLoading(false));
+    }
 
-  if (bimbinganData.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" class="no-data">Belum ada data</td></tr>`;
-    return;
-  }
+    function renderTable() {
+        const tbody = document.getElementById('data-body');
+        tbody.innerHTML = '';
+        if (bimbinganData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="no-data">Belum ada data</td></tr>';
+            return;
+        }
+        bimbinganData.forEach(item => {
+            tbody.innerHTML += `<tr>
+                <td><strong>${formatDateOnly(item.Tanggal)}</strong></td>
+                <td>${item.Nama || ''}</td>
+                <td>${item.NIS || ''}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteData('${item.NIS}')">Hapus</button>
+                </td>
+            </tr>`;
+        });
+    }
 
-  bimbinganData.forEach(item => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${item.Tanggal}</td>
-        <td>${item.Nama}</td>
-        <td>${item.NIS}</td>
-        <td>
-          <button class="btn btn-danger" onclick="deleteData('${item.NIS}')">Hapus</button>
-        </td>
-      </tr>
-    `;
-  });
-}
+    function deleteData(nis) {
+        if(confirm("Hapus data NIS " + nis + "?")) {
+            toggleLoading(true);
+            
+            // Mengirim perintah lewat parameter URL (GET)
+            var deleteUrl = SCRIPT_URL + "?action=delete&nis=" + encodeURIComponent(nis);
+            
+            fetch(deleteUrl)
+            .then(res => res.text())
+            .then(result => {
+                alert("Sistem: " + result);
+                fetchData(); // Refresh tabel
+            })
+            .catch(err => {
+                // Karena Google Sites kadang memblokir respon teks, 
+                // kita asumsikan berhasil jika tidak ada error fatal
+                console.log("CORS Note: " + err);
+                setTimeout(fetchData, 2000); 
+            })
+            .finally(() => toggleLoading(false));
+        }
+    }
 
-function deleteData(nis) {
-  if (!confirm("Hapus data NIS " + nis + "?")) return;
+    document.getElementById('bimbinganForm').onsubmit = function(e) {
+        e.preventDefault();
+        toggleLoading(true);
+        
+        const payload = {
+            action: "add",
+            tanggal: document.getElementById('tanggal').value,
+            nis: document.getElementById('nis').value.trim(),
+            nama: document.getElementById('nama').value,
+            catatan: document.getElementById('catatan').value,
+            tindakLanjut: document.getElementById('tindakLanjut').value,
+            alamat: document.getElementById('alamat').value,
+            namaOrtu: document.getElementById('namaOrtu').value,
+            telp: document.getElementById('telp').value.trim(),
+            pekerjaan: document.getElementById('pekerjaan').value
+        };
 
-  toggleLoading(true);
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+        .then(() => { 
+            alert("Data Berhasil Tersimpan di Cloud!"); 
+            document.getElementById('bimbinganForm').reset();
+            document.getElementById('tanggal').valueAsDate = new Date();
+            showPage('page-menu');
+        })
+        .catch(err => alert("Gagal menyimpan: " + err))
+        .finally(() => toggleLoading(false));
+    };
 
-  fetch(SCRIPT_URL + "?action=delete&nis=" + encodeURIComponent(nis))
-    .then(res => res.text())
-    .then(() => fetchData())
-    .catch(() => fetchData())
-    .finally(() => toggleLoading(false));
-}
+    function downloadExcel() {
+        if (bimbinganData.length === 0) {
+            alert("Belum ada data untuk diunduh!");
+            return;
+        }
+        
+        const cleanedData = bimbinganData.map(item => ({
+            ...item,
+            Tanggal: formatDateOnly(item.Tanggal)
+        }));
 
-document.getElementById('bimbinganForm').onsubmit = function(e) {
-  e.preventDefault();
+        const ws = XLSX.utils.json_to_sheet(cleanedData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Database_Gesit");
+        XLSX.writeFile(wb, `Data_Bimbingan_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
 
-  const data = {
-    action: "add",
-    tanggal: tanggal.value,
-    nis: nis.value,
-    nama: nama.value,
-    catatan: catatan.value,
-    tindakLanjut: tindakLanjut.value,
-    alamat: alamat.value,
-    namaOrtu: namaOrtu.value,
-    telp: telp.value,
-    pekerjaan: pekerjaan.value
-  };
-
-  toggleLoading(true);
-
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(() => {
-    alert("Data tersimpan");
-    this.reset();
-    showPage('page-menu');
-  })
-  .finally(() => toggleLoading(false));
-};
-
-function downloadExcel() {
-  if (!bimbinganData.length) return alert("Tidak ada data");
-
-  const ws = XLSX.utils.json_to_sheet(bimbinganData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Data");
-  XLSX.writeFile(wb, "Data_Bimbingan.xlsx");
-}
+    window.addEventListener('load', () => {
+        document.getElementById('tanggal').valueAsDate = new Date();
+    });
 </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c9f768de492fd91',t:'MTc3MDQzMTQwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
-
-
