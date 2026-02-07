@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guru Wali - Gesit Jatie Hartono</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guru Wali - Gesit Jatie Hartono</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
         :root { 
             --primary: #4f46e5; 
             --primary-hover: #4338ca;
@@ -86,108 +86,120 @@
         table { width: 100%; border-collapse: collapse; }
         th { background: #f9fafb; padding: 15px; text-align: left; font-size: 0.75rem; color: var(--text-light); border-bottom: 1.5px solid #e5e7eb; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
+
+        .detail-box {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+
+        .btn-info {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
     </style>
-</head>
-<body>
-
-<div id="loading" class="hidden loading-overlay">
-    <div class="spinner"></div>
-    <p style="font-weight: 600; margin-top: 15px; color: var(--primary)">Sedang memproses...</p>
-</div>
-
-<div id="page-login" class="container">
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div id="loading" class="hidden loading-overlay">
+   <div class="spinner"></div>
+   <p style="font-weight: 600; margin-top: 15px; color: var(--primary)">Sedang memproses...</p>
+  </div>
+  <div id="page-login" class="container">
+   <div class="header">
+    <h2 style="font-size: 1.8rem;">🔐 Login Akses</h2>
+    <p>Gunakan akun Guru Wali untuk melanjutkan</p>
+   </div><label>Nama Pengguna</label> <input type="text" id="username" placeholder="Masukkan Username"> <label>Kata Sandi</label> <input type="password" id="password" placeholder="Masukkan Sandi"> <button class="btn btn-primary" onclick="handleLogin()">Masuk ke Aplikasi</button>
+  </div>
+  <div id="main-content" class="hidden">
+   <div id="page-menu" class="container">
     <div class="header">
-        <h2 style="font-size: 1.8rem;">🔐 Login Akses</h2>
-        <p>Gunakan akun Guru Wali untuk melanjutkan</p>
+     <h2>Pusat Kendali</h2>
+     <p>Aplikasi Monitoring Bimbingan Siswa</p>
+    </div><button class="btn btn-success" onclick="showPage('page-form')">📝 Tambah Data Baru</button> <button class="btn btn-primary" onclick="fetchData()">📊 Rekap Data Online</button> <button class="btn btn-back" style="width: 100%; margin-top: 20px;" onclick="location.reload()">Keluar Sesi</button>
+   </div>
+   <div id="page-form" class="hidden container"><button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
+    <div class="header">
+     <h2>Input Laporan</h2>
+     <p>Silakan isi detail bimbingan di bawah ini</p>
     </div>
-    <label>Nama Pengguna</label>
-    <input type="text" id="username" placeholder="Masukkan Username">
-    <label>Kata Sandi</label>
-    <input type="password" id="password" placeholder="Masukkan Sandi">
-    <button class="btn btn-primary" onclick="handleLogin()">Masuk ke Aplikasi</button>
-</div>
-
-<div id="main-content" class="hidden">
-    <div id="page-menu" class="container">
-        <div class="header">
-            <h2>Pusat Kendali</h2>
-            <p>Aplikasi Monitoring Bimbingan Siswa</p>
-        </div>
-        <button class="btn btn-success" onclick="showPage('page-form')">📝 Tambah Data Baru</button>
-        <button class="btn btn-primary" onclick="fetchData()">📊 Rekap Data Online</button>
-        <button class="btn btn-back" style="width: 100%; margin-top: 20px;" onclick="location.reload()">Keluar Sesi</button>
+    <div class="section-info">
+     📌 INFORMASI KEJADIAN &amp; SISWA
     </div>
-
-    <div id="page-form" class="hidden container">
-        <button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
-        <div class="header">
-            <h2>Input Laporan</h2>
-            <p>Silakan isi detail bimbingan di bawah ini</p>
-        </div>
-
-        <div class="section-info">📌 INFORMASI KEJADIAN & SISWA</div>
-        
-        <form id="bimbinganForm">
-            <label>📅 Tanggal</label>
-            <input type="date" id="tanggal" required title="Pilih tanggal kejadian">
-            
-            <label>🆔 Nomor Induk Siswa (NIS)</label>
-            <input type="text" id="nis" placeholder="Contoh: 202301" required>
-            
-            <label>👤 Nama Lengkap Siswa</label>
-            <input type="text" id="nama" placeholder="Masukkan Nama Siswa" required>
-            
-            <label>📝 Catatan Masalah</label>
-            <textarea id="catatan" rows="3" placeholder="Uraikan masalah atau kasus siswa..."></textarea>
-            
-            <label>💡 Tindak Lanjut</label>
-            <textarea id="tindakLanjut" rows="3" placeholder="Solusi atau tindakan yang telah diberikan..."></textarea>
-
-            <div class="section-info" style="margin-top:25px;">🏠 INFORMASI ORANG TUA / WALI</div>
-            
-            <label>📍 Alamat Rumah</label>
-            <input type="text" id="alamat" placeholder="Alamat lengkap">
-            
-            <label>👨‍👩‍👦 Nama Orang Tua</label>
-            <input type="text" id="namaOrtu" placeholder="Ayah / Ibu">
-            
-            <label>📞 No. Telepon / WhatsApp</label>
-            <input type="text" id="telp" placeholder="Contoh: 08123456789">
-            
-            <label>💼 Pekerjaan Orang Tua</label>
-            <input type="text" id="pekerjaan" placeholder="Contoh: Pegawai Swasta">
-            
-            <button type="submit" class="btn btn-success" style="margin-top: 25px;">Simpan Laporan Sekarang</button>
-        </form>
+    <form id="bimbinganForm"><label>📅 Tanggal</label> <input type="date" id="tanggal" required title="Pilih tanggal kejadian"> <label>🆔 Nomor Induk Siswa (NIS)</label> <input type="text" id="nis" placeholder="Contoh: 202301" required> <label>👤 Nama Lengkap Siswa</label> <input type="text" id="nama" placeholder="Masukkan Nama Siswa" required> <label>📝 Catatan Masalah</label> <textarea id="catatan" rows="3" placeholder="Uraikan masalah atau kasus siswa..."></textarea> <label>💡 Tindak Lanjut</label> <textarea id="tindakLanjut" rows="3" placeholder="Solusi atau tindakan yang telah diberikan..."></textarea>
+     <div class="section-info" style="margin-top:25px;">
+      🏠 INFORMASI ORANG TUA / WALI
+     </div><label>📍 Alamat Rumah</label> <input type="text" id="alamat" placeholder="Alamat lengkap"> <label>👨‍👩‍👦 Nama Orang Tua</label> <input type="text" id="namaOrtu" placeholder="Ayah / Ibu"> <label>📞 No. Telepon / WhatsApp</label> <input type="text" id="telp" placeholder="Contoh: 08123456789"> <label>💼 Pekerjaan Orang Tua</label> <input type="text" id="pekerjaan" placeholder="Contoh: Pegawai Swasta"> <button type="submit" class="btn btn-success" style="margin-top: 25px;">Simpan Laporan Sekarang</button>
+    </form>
+   </div>
+   <div id="page-data" class="hidden container data-card"><button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
+    <div class="header">
+     <h2>Data Tersimpan</h2>
+     <p>Daftar seluruh bimbingan yang telah masuk</p>
+    </div><button class="btn btn-primary" style="margin-bottom: 20px; width: auto;" onclick="downloadExcel()">📥 Export ke Excel</button>
+    <div class="table-wrapper">
+     <table>
+      <thead>
+       <tr>
+        <th>TANGGAL</th>
+        <th>NAMA LENGKAP</th>
+        <th style="text-align:center">KENDALI</th>
+       </tr>
+      </thead>
+      <tbody id="data-body"></tbody>
+     </table>
     </div>
-
-    <div id="page-data" class="hidden container data-card">
-        <button class="btn btn-back" onclick="showPage('page-menu')">← Kembali</button>
-        <div class="header">
-            <h2>Data Tersimpan</h2>
-            <p>Daftar seluruh bimbingan yang telah masuk</p>
-        </div>
-        <button class="btn btn-primary" style="margin-bottom: 20px; width: auto;" onclick="downloadExcel()">📥 Export ke Excel</button>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>TANGGAL</th>
-                        <th>NAMA LENGKAP</th>
-                        <th style="text-align:center">KENDALI</th>
-                    </tr>
-                </thead>
-                <tbody id="data-body"></tbody>
-            </table>
-        </div>
+   </div>
+   <div id="page-detail" class="hidden container"><button class="btn btn-back" onclick="showPage('page-data')">← Kembali</button>
+    <div class="header">
+     <h2>Detail Bimbingan</h2>
+     <p>Informasi lengkap siswa dan bimbingan</p>
     </div>
-</div>
-
-<script>
-    // URL Web App Google Script Anda
+    <div id="detail-content" style="margin-top: 20px;"></div>
+   </div>
+  </div>
+  <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPZDdVJiQAPCgd-DlnFpnuKgDy33A5FPKy3NJInCbTYhcB2juG1FRPUvSMBUeGzfHshw/exec";
     
     let bimbinganData = [];
+    let selectedData = null;
 
     function formatDateOnly(dateStr) {
         if (!dateStr) return '';
@@ -203,7 +215,7 @@
     }
 
     function showPage(id) {
-        ['page-menu', 'page-form', 'page-data'].forEach(p => document.getElementById(p).classList.add('hidden'));
+        ['page-menu', 'page-form', 'page-data', 'page-detail'].forEach(p => document.getElementById(p).classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
         window.scrollTo(0, 0);
     }
@@ -233,12 +245,91 @@
                 <td style="color:#6b7280">${formatDateOnly(item.Tanggal)}</td>
                 <td style="font-weight:600">${item.Nama || ''}</td>
                 <td style="text-align:center">
-                    <button onclick="deleteData('${item.NIS}')" 
-                    style="background:#fee2e2; color:#b91c1c; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:700;">
-                    Hapus</button>
+                    <div class="btn-group">
+                        <button onclick="viewDetail('${item.NIS}')" 
+                        style="background:#3b82f6; color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:700; flex:1;">
+                        Lihat</button>
+                        <button onclick="deleteData('${item.NIS}')" 
+                        style="background:#fee2e2; color:#b91c1c; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:700; flex:1;">
+                        Hapus</button>
+                    </div>
                 </td>
             </tr>`;
         });
+    }
+
+    function viewDetail(nis) {
+        const item = bimbinganData.find(d => d.NIS === nis);
+        if (!item) return;
+        
+        selectedData = item;
+        const detail = document.getElementById('detail-content');
+        
+        // Debug: Log semua field dari item
+        console.log("Data item:", JSON.stringify(item, null, 2));
+        console.log("Semua keys:", Object.keys(item));
+        
+        // Fungsi untuk mencari value dengan toleransi case-insensitive
+        const getFieldValue = (keys) => {
+            for (let key of keys) {
+                if (item[key]) return item[key];
+                // Cari case-insensitive
+                const foundKey = Object.keys(item).find(k => k.toLowerCase() === key.toLowerCase());
+                if (foundKey) return item[foundKey];
+            }
+            return '-';
+        };
+        
+        detail.innerHTML = `
+            <div class="detail-box">
+                <div class="detail-label">📅 Tanggal Bimbingan</div>
+                <div class="detail-value">${formatDateOnly(item.Tanggal)}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">🆔 Nomor Induk Siswa</div>
+                <div class="detail-value">${item.NIS || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">👤 Nama Lengkap Siswa</div>
+                <div class="detail-value">${item.Nama || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">📝 Catatan Masalah</div>
+                <div class="detail-value" style="white-space: pre-wrap;">${getFieldValue(['Catatan', 'catatan']) || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">💡 Tindak Lanjut</div>
+                <div class="detail-value" style="white-space: pre-wrap;">${getFieldValue(['TindakLanjut', 'tindakLanjut', 'Tindak_Lanjut', 'tindak_lanjut']) || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">📍 Alamat Rumah</div>
+                <div class="detail-value">${getFieldValue(['Alamat', 'alamat']) || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">👨‍👩‍👦 Nama Orang Tua</div>
+                <div class="detail-value">${getFieldValue(['NamaOrtu', 'namaOrtu', 'Nama_Ortu', 'nama_ortu', 'Nama Orang Tua', 'nama orang tua']) || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">📞 No. Telepon / WhatsApp</div>
+                <div class="detail-value">${getFieldValue(['Telp', 'telp', 'Telepon', 'telepon', 'No. Telepon', 'no_telepon', 'NoTelepon']) || '-'}</div>
+            </div>
+
+            <div class="detail-box">
+                <div class="detail-label">💼 Pekerjaan Orang Tua</div>
+                <div class="detail-value">${getFieldValue(['Pekerjaan', 'pekerjaan']) || '-'}</div>
+            </div>
+
+            <button class="btn btn-danger" onclick="deleteData('${item.NIS}'); setTimeout(() => showPage('page-data'), 1000);" style="margin-top: 25px;">🗑️ Hapus Data</button>
+        `;
+        
+        showPage('page-detail');
     }
 
     function deleteData(nis) {
@@ -295,5 +386,5 @@
         XLSX.writeFile(wb, "Rekap_Bimbingan_Konseling.xlsx");
     }
 </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ca09df612884085',t:'MTc3MDQ0MzUwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
