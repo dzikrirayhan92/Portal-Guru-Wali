@@ -207,11 +207,44 @@
     }
 
     function handleLogin() {
-        if(document.getElementById('username').value === "gesit" && document.getElementById('password').value === "admin123") {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if(username === "gesit" && password === "admin123") {
             document.getElementById('page-login').classList.add('hidden');
             document.getElementById('main-content').classList.remove('hidden');
             showPage('page-menu');
-        } else { alert("Maaf, Username atau Sandi salah!"); }
+        } else {
+            // Tampilkan notifikasi error inline
+            let errorMsg = document.getElementById('login-error');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.id = 'login-error';
+                errorMsg.style.cssText = `
+                    background: #fee2e2;
+                    color: #b91c1c;
+                    border: 1.5px solid #fca5a5;
+                    padding: 14px;
+                    border-radius: 12px;
+                    margin-bottom: 15px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                `;
+                errorMsg.innerHTML = '⚠️ Username atau Sandi salah! Silakan coba lagi.';
+                document.getElementById('page-login').querySelector('.header').parentNode.insertBefore(errorMsg, document.getElementById('page-login').querySelector('.header').nextSibling);
+            }
+            errorMsg.style.display = 'flex';
+            
+            // Hapus pesan setelah 4 detik
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 4000);
+            
+            // Kosongkan field password
+            document.getElementById('password').value = '';
+        }
     }
 
     function showPage(id) {
@@ -303,11 +336,11 @@
 
             <div class="detail-box">
                 <div class="detail-label">💡 Tindak Lanjut</div>
-                <div class="detail-value" style="white-space: pre-wrap;">${getFieldValue(['TindakLanjut', 'tindakLanjut', 'Tindak_Lanjut', 'tindak_lanjut']) || '-'}</div>
+                <div class="detail-value" style="white-space: pre-wrap;">${getFieldValue(['Tindak Lanjut', 'tindak lanjut', 'TindakLanjut', 'tindakLanjut', 'Tindak_Lanjut', 'tindak_lanjut']) || '-'}</div>
             </div>
 
             <div class="detail-box">
-                <div class="detail-label">📍 Alamat Rumah</div>
+                <div class="detail-label">🏠 Alamat Rumah</div>
                 <div class="detail-value">${getFieldValue(['Alamat', 'alamat']) || '-'}</div>
             </div>
 
@@ -326,7 +359,7 @@
                 <div class="detail-value">${getFieldValue(['Pekerjaan', 'pekerjaan']) || '-'}</div>
             </div>
 
-            <button class="btn btn-danger" onclick="deleteData('${item.NIS}'); setTimeout(() => showPage('page-data'), 1000);" style="margin-top: 25px;">🗑️ Hapus Data</button>
+            <button class="btn" onclick="deleteData('${item.NIS}'); setTimeout(() => showPage('page-data'), 1000);" style="margin-top: 25px; background: #ef4444; color: white; width: auto; padding: 10px 20px;">🗑️ Hapus</button>
         `;
         
         showPage('page-detail');
@@ -367,7 +400,7 @@
 
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
         .then(() => { 
-            alert("✅ Berhasil menyimpan data bimbingan!"); 
+            alert("�� Berhasil menyimpan data bimbingan!"); 
             document.getElementById('bimbinganForm').reset();
             showPage('page-menu');
         })
@@ -386,5 +419,5 @@
         XLSX.writeFile(wb, "Rekap_Bimbingan_Konseling.xlsx");
     }
 </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ca09df612884085',t:'MTc3MDQ0MzUwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ca0b5b3b72795ca',t:'MTc3MDQ0NDQ3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
